@@ -171,6 +171,20 @@ public class MaskTextField extends TextField implements DecorationSupport {
     protected void initializeTextField() {
         initializeInputMaskVerifiers();
         initializeConversions();
+        
+        // Fix -> When settext empty, textfield loses inputmask 
+        textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+
+				if (newValue == null)
+				{
+					clear();
+				}
+			}
+		});
+        
 //        setContentFilter(new Callback<ContentChange, ContentChange>() {
 //            @Override
 //            public ContentChange call(ContentChange param) {
@@ -624,6 +638,7 @@ public class MaskTextField extends TextField implements DecorationSupport {
 
     @Override
     public void replaceText(int start, int end, String text) {
+    	
         if (getInputMask() != null) {
             int index = 0;
             int count = end - start;
@@ -1046,6 +1061,16 @@ public class MaskTextField extends TextField implements DecorationSupport {
      */
     public void setClearButtonVisible(boolean clearButtonVisible) {
         clearButtonVisibleProperty().set(clearButtonVisible);
+    }
+    
+    public boolean isEmpty()
+    {
+    	if ( getText().isEmpty() || getText().equals(getInitialTextFromMask()) )
+    	{
+    		return true;
+    	}
+    	
+    	return false;
     }
 
     // For decoration
